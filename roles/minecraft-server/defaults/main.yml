@@ -1,8 +1,27 @@
 ---
 minecraft_server_enabled: false
 
-# directories
-minecraft_server_data_directory: "{{ docker_home }}/minecraft_server"
+# The root of the minecraft data directories. The container names will be
+# prefixed with `mc_srv_` and then appended to this value to provide unique
+#directories for each container to bind to.
+minecraft_server_root_data_directory: "{{ docker_home }}/minecraft_server"
 
-# network
-minecraft_server_port: "25565"
+# The default environment values that will be set for every server container defined
+# unless overridden by values in the `addl_env` field of the container definition.
+minecraft_server_default_env:
+  EULA: "TRUE"
+  ONLINE_MODE: "FALSE"
+
+# The array of definitions that will create containers for the minecraft
+# server image. It is the users responsibility to deconflict ports,
+# deconflict container names, and provide valid environment config (if any).
+# The container names will be prepended with `mc_serv_` to enable stopping
+# all of the server containers when disabled, regardless of the name set.
+minecraft_server_containers:
+  - cntnr_name: default_mc_srv
+    port: "25565"
+    addl_env: {}
+  - cntnr_name: creative_srv
+    port: "25566"
+    addl_env: {}
+
