@@ -1,20 +1,37 @@
 ---
-- name: Create Minecraft Server Directories
-  file:
-    path: "{{ item }}"
-    state: directory
-  with_items:
-    - "{{ minecraft_server_data_directory }}"
+- name: Start Minecraft Servers
+  block:
+    - name: Create Minecraft Server Directories
+      file:
+        path: "{{ minecraft_server_root_data_directory }}/mc_srv_{{ item.cntnr_name }}"
+        state: directory
+      loop: "{{ minecraft_server_containers }}"
+    
+    - name: Create Minecraft Server Docker Containers
+      docker_container:
+        name: "mc_srv_{{ item.cntnr_name }}"
+        image: itzg/minecraft-server:latest
+        pull: true
+        volumes:
+          - "{{ minecraft_server_root_data_directory }}/{{ item.cntnr_name }}:/data:rw"
+        ports:
+          - "{{ item.port }}:25565"
+        env: "{{ minecraft_default_env | combine(item.addl_env) }}"
+      loop: "{{ minecraft_server_containers }}"
+  when: minecraft_server_enabled is true
 
-- name: Minecraft Server Docker Container
-  docker_container:
-    name: minecraft-server
-    image: itzg/minecraft-server:latest
-    pull: true
-    volumes:
-      - "{{ minecraft_server_data_directory }}:/data:rw"
-    ports:
-      - "{{ minecraft_server_port }}:25565"
-    env:
-      EULA: "TRUE"
-    restart_policy: unless-stopped
+- name: Stop Minecraft Servers
+  block:
+    - name: Gather Container Information
+      docker_host_info:
+        containers: yes
+      register: docker_info
+
+    - name: Remove Minecraft Server Containers
+      docker_container:
+        # Slice off the leading '/'
+        name: "{{ item[1:] }}"
+        state: absent
+      # The Docker API returns container information with an array of names, and these names are prefixed with '/'.
+      loop: "{{ docker_info.containers | map(attribute='Names') | list | flatten | select('match', '^/mc_srv_.*$') | list }}"
+  when: minecraft_server_enabled is false
