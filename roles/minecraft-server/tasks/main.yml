@@ -16,7 +16,7 @@
           - "{{ minecraft_server_root_data_directory }}/{{ item.cntnr_name }}:/data:rw"
         ports:
           - "{{ item.port }}:25565"
-        env: "{{ minecraft_default_env | combine(item.addl_env) }}"
+        env: "{{ minecraft_server_default_env | combine(item.addl_env) }}"
       loop: "{{ minecraft_server_containers }}"
   when: minecraft_server_enabled is true
 
