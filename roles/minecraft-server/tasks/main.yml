@@ -13,7 +13,7 @@
         image: itzg/minecraft-server:latest
         pull: true
         volumes:
-          - "{{ minecraft_server_root_data_directory }}/mv_srv_{{ item.cntnr_name }}:/data:rw"
+          - "{{ minecraft_server_root_data_directory }}/mc_srv_{{ item.cntnr_name }}:/data:rw"
         ports:
           - "{{ item.port }}:25565"
         env: "{{ minecraft_server_default_env | combine(item.addl_env) }}"
