@@ -11,6 +11,8 @@
       docker_container:
         name: "mc_srv_{{ item.cntnr_name }}"
         image: itzg/minecraft-server:latest
+        interactive: "{{ item.interactive | default(true) | bool }}"
+        tty: "{{ item.tty | default(true) | bool }}"
         pull: true
         volumes:
           - "{{ minecraft_server_root_data_directory }}/mc_srv_{{ item.cntnr_name }}:/data:rw"

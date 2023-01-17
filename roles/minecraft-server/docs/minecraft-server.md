@@ -19,6 +19,8 @@ is an array of objects:
 minecraft_server_containers:
   - cntnr_name: my_survival_server
     port: "25565"
+    interactive: false
+    tty: false
     addl_env: {}
   - cntnr_name: my_creative_server
     port: "25566"
@@ -34,4 +36,6 @@ by role tasks, particularly when disabled the role.
 
 The role provides the environment values of `EULA: "TRUE"` and `ONLINE_MODE: "FALSE"` by
 default for all defined containers. To change those values, simply override the variable in
-the `addl_env` field of the server configuration.
+the `addl_env` field of the server configuration. The role will also provide
+for easy erver console access from the container via `interactive: true` and
+`tty: true`. These values can be set to false to disable.
