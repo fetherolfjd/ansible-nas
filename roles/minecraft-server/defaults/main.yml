@@ -16,12 +16,13 @@ minecraft_server_default_env:
 # server image. It is the users responsibility to deconflict ports,
 # deconflict container names, and provide valid environment config (if any).
 # The container names will be prepended with `mc_serv_` to enable stopping
-# all of the server containers when disabled, regardless of the name set.
+# all of the server containers when disabled, regardless of the name set. Users
+# can also configure interactive and tty settings for the container. The default
+# values are true to allow easy attach access to the server console.
 minecraft_server_containers:
   - cntnr_name: default_mc_srv
     port: "25565"
-    addl_env: {}
-  - cntnr_name: creative_srv
-    port: "25566"
+    interactive: true
+    tty: true
     addl_env: {}
 
