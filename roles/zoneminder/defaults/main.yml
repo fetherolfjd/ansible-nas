@@ -1,0 +1,28 @@
+---
+zoneminder_enabled: false
+
+zoneminder_data_directory: "{{ docker_home }}/zoneminder"
+
+zoneminder_image: ghcr.io/zoneminder-containers/eventserver-base:main-zm_v1.36.32-es_v6.1.28
+zoneminder_db_image: mariadb
+
+zoneminder_env:
+  ES_DEBUG_ENABLED: "1"
+  ES_COMMON_NAME: localhost
+  ES_ENABLE_AUTH: "0"
+
+  MYSQL_ROOT_PASSWORD: rootpassword
+  MYSQL_USER: mysqluser
+  MYSQL_PASSWORD: mysqlpassword
+
+  MYSQL_DATABASE: zm
+
+  TZ: America/Denver
+
+  MAX_LOG_SIZE_BYTES: 1000000
+  MAX_LOG_NUMBER: 20
+
+  EMAIL_HOST: smtp.gmail.com
+  EMAIL_PORT: 587
+  EMAIL_ADDRESS: coolemail@gmail.com
+  EMAIL_PASSWORD: very_secure_password
