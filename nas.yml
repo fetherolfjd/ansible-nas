@@ -458,3 +458,8 @@
       tags:
         - znc
       when: (znc_enabled | default(False))
+
+    - role: zoneminder
+      tags:
+        - zoneminder
+      when: (znc_enabled | default(False))
