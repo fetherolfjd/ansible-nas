@@ -1,0 +1,57 @@
+---
+- name: Start Zoneminder
+  block:
+    - name: Create Zoneminder Directories
+      file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ zoneminder_data_directory }}/db"
+        - "{{ zoneminder_data_directory }}/data"
+        - "{{ zoneminder_data_directory }}/config"
+        - "{{ zoneminder_data_directory }}/log"
+
+    - name: Zoneminder DB Docker Container
+      docker_container:
+        name: zoneminder-db
+        image: "{{ zoneminder_db_image }}"
+        pull: true
+        volumes:
+          - "{{ zoneminder_data_directory }}/db:/var/lib/mysql"
+        env: "{{ zoneminder_env }}"
+        restart_policy: unless-stopped
+
+    - name: Zoneminder Docker Container
+      docker_container:
+        name: zoneminder
+        image: "{{ zoneminder_image }}"
+        pull: true
+        links:
+          - zoneminder-db:db
+        volumes:
+          - "{{ zoneminder_data_directory }}/data:/data"
+          - "{{ zoneminder_data_directory }}/config:/config"
+          - "{{ zoneminder_data_directory }}/log:/log"
+          - type: tmpfs
+            target: /dev/shm
+            tmpfs:
+              size: 1000000000
+        ports:
+          - "8091:80"
+          - "8092:443"
+          - "8093:9000"
+        env: "{{ zoneminder_env }}"
+        restart_policy: unless-stopped
+  when: zoneminder_enabled is true
+
+- name: Stop Zoneminder
+  block:
+    - name: Stop Zoneminder
+      docker_container:
+        name: zoneminder
+        state: absent
+    - name: Stop Zoneminder DB
+      docker_container:
+        name: zoneminder-db
+        state: absent
+  when: zoneminder_enabled is false
