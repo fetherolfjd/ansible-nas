@@ -37,9 +37,9 @@
             tmpfs:
               size: 1000000000
         ports:
-          - "60080:80"
-          - "60443:443"
-          - "59000:9000"
+          - "8091:80"
+          - "8092:443"
+          - "8093:9000"
         env: "{{ zoneminder_env }}"
         restart_policy: unless-stopped
   when: zoneminder_enabled is true
