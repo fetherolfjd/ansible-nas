@@ -26,3 +26,10 @@ minecraft_server_containers:
     tty: true
     addl_env: {}
 
+# network
+minecraft_server_port: "25565"
+
+# docker
+minecraft_server_container_name: "minecraft-server"
+minecraft_server_image_name: "itzg/minecraft-server"
+minecraft_server_image_version: "latest"
