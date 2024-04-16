@@ -21,7 +21,7 @@
           TZ: "{{ ansible_nas_timezone }}"
           PUID: "{{ mealie_user_id }}"
           PGID: "{{ mealie_group_id }}"
-          RECIPE_PUBLIC: "true"
+          RECIPE_PUBLIC: "false"
           RECIPE_SHOW_NUTRITION: "true"
           RECIPE_SHOW_ASSETS: "true"
           RECIPE_LANDSCAPE_VIEW: "true"

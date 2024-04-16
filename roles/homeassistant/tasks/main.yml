@@ -7,6 +7,7 @@
         state: directory
       with_items:
         - "{{ homeassistant_data_directory }}/config"
+        - "{{ homeassistant_data_directory }}/zwavejs_store"
 
     - name: Home Assistant Docker Container
       community.docker.docker_container:
@@ -17,6 +18,8 @@
           - "{{ homeassistant_data_directory }}/config:/config:rw"
         network_mode: host
         restart_policy: unless-stopped
+        devices:
+          - /dev/serial/by-id/{{ homeassistant_zigbee_device_id }}:/dev/zigbee
         env:
           TZ: "{{ ansible_nas_timezone }}"
         labels:
@@ -27,6 +30,20 @@
           traefik.http.routers.homeassistant.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
           traefik.http.services.homeassistant.loadbalancer.server.port: "8123"
         memory: "{{ homeassistant_memory }}"
+    - name: Z-Wave JS Docker Container
+      community.docker.docker_container:
+        name: "{{ homeassistant_zwavejs_container_name }}"
+        image: "{{ homeassistant_zwavejs_image_name }}:{{ homeassistant_zwavejs_image_version }}"
+        pull: true
+        tty: true
+        volumes:
+          - "{{ homeassistant_data_directory }}/zwavejs_store:/usr/src/app/store"
+        devices:
+          - /dev/serial/by-id/{{ homeassistant_zwave_device_id }}:/dev/zwave # ZWave USB Stick
+        ports:
+          - "8091:8091"
+          - "3001:3000"
+        restart_policy: unless-stopped
   when: homeassistant_enabled is true
 
 - name: Stop homeassistant
@@ -34,5 +51,9 @@
     - name: Stop homeassistant
       community.docker.docker_container:
         name: "{{ homeassistant_container_name }}"
+        state: absent
+    - name: Stop ZWave JS
+      community.docker.docker_container:
+        name: "{{ homeassistant_zwavejs_container_name }}"
         state: absent
   when: homeassistant_enabled is false

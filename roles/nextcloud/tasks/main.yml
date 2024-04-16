@@ -49,6 +49,8 @@
           MYSQL_USER: "{{ nextcloud_sql_user }}"
           MYSQL_PASSWORD: "{{ nextcloud_sql_password }}"
           NEXTCLOUD_TRUSTED_DOMAINS: "{{ nextcloud_hostname }}.{{ ansible_nas_domain }}"
+          OVERWRITECLIURL: "https://{{ nextcloud_hostname }}.{{ ansible_nas_domain }}"
+          OVERWRITEPROTOCOL: https
         restart_policy: unless-stopped
         memory: "{{ nextcloud_memory }}"
         labels:
@@ -71,3 +73,4 @@
         name: "{{ nextcloud_db_container_name }}"
         state: absent
   when: nextcloud_enabled is false
+

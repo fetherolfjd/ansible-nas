@@ -22,4 +22,4 @@ komga_image_name: "gotson/komga"
 komga_image_version: "latest"
 
 # specs
-komga_memory: "1g"
+komga_memory: "2g"
